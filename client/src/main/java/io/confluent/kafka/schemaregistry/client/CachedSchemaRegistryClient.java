@@ -136,7 +136,7 @@ public class CachedSchemaRegistryClient implements SchemaRegistryClient {
       return version;
     }
   }
-  
+
   @Override
   public boolean testCompatibility(String subject, Schema schema) throws IOException, RestClientException {
     return restService.testCompatibility(schema.toString(), subject, "latest");
@@ -154,5 +154,9 @@ public class CachedSchemaRegistryClient implements SchemaRegistryClient {
     return response.getCompatibilityLevel();
   }
 
+  @Override
+  public List<String> getAllSubjects() throws IOException, RestClientException {
+    return restService.getAllSubjects();
+  }
 
 }

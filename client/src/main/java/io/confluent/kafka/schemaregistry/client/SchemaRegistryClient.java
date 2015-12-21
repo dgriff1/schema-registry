@@ -19,6 +19,8 @@ import org.apache.avro.Schema;
 
 import java.io.IOException;
 
+import java.util.List;
+
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
 
 public interface SchemaRegistryClient {
@@ -32,8 +34,10 @@ public interface SchemaRegistryClient {
   public int getVersion(String subject, Schema schema) throws IOException, RestClientException;
 
   public boolean testCompatibility(String subject, Schema schema) throws IOException, RestClientException;
-  
+
   public String updateCompatibility(String subject, String compatibility) throws IOException, RestClientException;
-  
+
   public String getCompatibility(String subject) throws IOException, RestClientException;
+
+  public List<String>  getAllSubjects() throws IOException, RestClientException;
 }

@@ -18,6 +18,7 @@ package io.confluent.kafka.schemaregistry.client;
 import org.apache.avro.Schema;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -164,7 +165,7 @@ public class MockSchemaRegistryClient implements SchemaRegistryClient {
       throw new IOException("Cannot get version from schema registry!");
     }
   }
-  
+
   @Override
   public boolean testCompatibility(String subject, Schema newSchema) throws IOException,
       RestClientException {
@@ -174,12 +175,12 @@ public class MockSchemaRegistryClient implements SchemaRegistryClient {
     if (compatibility == null) {
       compatibility = defaultCompatibility;
     }
-    
+
     AvroCompatibilityLevel compatibilityLevel = AvroCompatibilityLevel.forName(compatibility);
     if (compatibilityLevel == null) {
       return false;
     }
-    
+
     return compatibilityLevel.compatibilityChecker.isCompatible(newSchema, latestSchema);
   }
 
@@ -201,5 +202,10 @@ public class MockSchemaRegistryClient implements SchemaRegistryClient {
       compatibility = defaultCompatibility;
     }
     return compatibility;
+  }
+
+  @Override
+  public List<String> getAllSubjects() throws IOException, RestClientException {
+    return new ArrayList(schemaCache.keySet());
   }
 }

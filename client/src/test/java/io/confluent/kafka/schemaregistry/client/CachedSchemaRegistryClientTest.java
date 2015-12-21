@@ -20,6 +20,10 @@ import io.confluent.kafka.schemaregistry.client.rest.entities.SchemaString;
 import org.apache.avro.Schema;
 import org.junit.Test;
 
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
+
 import static org.easymock.EasyMock.anyString;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.eq;
@@ -145,5 +149,35 @@ public class CachedSchemaRegistryClientTest {
   }
 
 
+  @Test
+  public void testGetAllSubjects() throws Exception {
+    RestService restService = createMock(RestService.class);
+    CachedSchemaRegistryClient client = new CachedSchemaRegistryClient(restService, 20);
 
+    String schema = "{\"type\": \"record\", \"name\": \"Blah\", \"fields\": [{ \"name\": \"name\", \"type\": \"string\" }]}";
+    Schema avroSchema = new Schema.Parser().parse(schema);
+
+    String subject = "foo";
+    String subject2 = "bar";
+    int id = 25;
+    int id2 = 25;
+
+    List<String> subjectList = new java.util.ArrayList<String>();
+    List<String> result;
+    subjectList.add(subject);
+    subjectList.add(subject2);
+
+    // Expect one call to register schema
+    expect(restService.registerSchema(anyString(), eq(subject))).andReturn(id);
+    expect(restService.registerSchema(anyString(), eq(subject2))).andReturn(id2);
+    expect(restService.getAllSubjects()).andReturn(subjectList);
+
+    replay(restService);
+
+    client.register(subject, avroSchema);
+
+    result = client.getAllSubjects();
+
+    assertEquals(subjectList, result);
+  }
 }
